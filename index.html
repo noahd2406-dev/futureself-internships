@@ -4,203 +4,337 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FutureSelf — Internships</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Fraunces:wght@600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Fraunces:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #F0F2F4;
+      --navy: #2C3E50;
+      --navy-dark: #1A252F;
+      --navy-mid: #34495e;
+      --bg: #F0F2F5;
       --surface: #FFFFFF;
       --border: #D5DAE0;
       --text-primary: #2C3E50;
       --text-secondary: #5D6D7E;
-      --accent: #2C3E50;
       --accent-light: #E8ECF0;
-      --accent-hover: #1A252F;
-      --tag-bg: #EAEef1;
-      --shadow-hover: 0 6px 28px rgba(44,62,80,0.15);
+      --tag-bg: #EEF1F4;
+      --shadow: 0 2px 12px rgba(44,62,80,0.08);
+      --shadow-hover: 0 8px 32px rgba(44,62,80,0.18);
       --radius: 14px;
-      --radius-sm: 8px;
+      --radius-sm: 9px;
     }
     body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text-primary); min-height: 100vh; }
-    .header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 28px 40px; display: flex; align-items: center; gap: 16px; }
-    .header-logo { font-family: 'Fraunces', serif; font-size: 22px; color: var(--accent); letter-spacing: -0.5px; }
-    .header-divider { width: 1px; height: 24px; background: var(--border); }
-    .header-subtitle { font-size: 14px; color: var(--text-secondary); }
-    .container { max-width: 1080px; margin: 0 auto; padding: 40px 24px 80px; }
-    .page-title { font-family: 'Fraunces', serif; font-size: 36px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.8px; }
-    .page-subtitle { font-size: 15px; color: var(--text-secondary); margin-bottom: 32px; }
-    .api-notice {
-      background: var(--accent-light); border: 1.5px solid #b0bec5; border-radius: var(--radius-sm);
-      padding: 14px 18px; margin-bottom: 24px; font-size: 13px; color: var(--accent-hover);
-      display: flex; align-items: flex-start; gap: 10px;
+
+    /* ── HEADER ── */
+    .header {
+      background: var(--navy);
+      padding: 0 36px;
+      display: flex; align-items: center; gap: 14px;
+      height: 62px;
+      position: sticky; top: 0; z-index: 200;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.25);
     }
-    .api-notice svg { flex-shrink: 0; margin-top: 1px; }
-    .api-notice code { background: rgba(0,0,0,0.07); padding: 1px 5px; border-radius: 4px; font-size: 12px; }
-    .api-notice a { color: inherit; }
-    .search-row { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
-    .search-input-wrap { position: relative; flex: 1; min-width: 220px; }
-    .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); pointer-events: none; }
-    .location-input-wrap { position: relative; min-width: 180px; }
-    .loc-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); pointer-events: none; }
-    input[type="text"] {
-      width: 100%; padding: 12px 16px 12px 40px; border: 1.5px solid var(--border);
+    .header-logo {
+      display: flex; align-items: center; gap: 10px; text-decoration: none;
+    }
+    .header-logo-ring {
+      width: 34px; height: 34px; border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.35);
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.1);
+    }
+    .header-logo-ring svg { width: 18px; height: 18px; }
+    .header-brand { font-family: 'Fraunces', serif; font-size: 19px; color: #fff; letter-spacing: -0.3px; }
+    .header-sep { width: 1px; height: 22px; background: rgba(255,255,255,0.18); }
+    .header-page { font-size: 13px; color: rgba(255,255,255,0.55); }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(140deg, var(--navy) 0%, var(--navy-mid) 100%);
+      padding: 36px 36px 32px;
+      color: #fff;
+    }
+    .hero h1 { font-family: 'Fraunces', serif; font-size: 30px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 5px; }
+    .hero p { font-size: 14px; color: rgba(255,255,255,0.65); margin-bottom: 22px; }
+    .search-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .search-input-wrap { position: relative; flex: 1; min-width: 200px; }
+    .location-input-wrap { position: relative; min-width: 160px; }
+    .input-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); pointer-events: none; opacity: 0.5; }
+    .search-row input[type="text"] {
+      width: 100%; padding: 11px 14px 11px 40px;
+      border: 1.5px solid rgba(255,255,255,0.2);
       border-radius: var(--radius-sm); font-family: inherit; font-size: 14px;
-      background: var(--surface); color: var(--text-primary); transition: border-color 0.2s; outline: none;
+      background: rgba(255,255,255,0.12); color: #fff;
+      transition: border-color 0.2s, background 0.2s; outline: none;
     }
-    input[type="text"]:focus { border-color: var(--accent); }
-    input[type="text"]::placeholder { color: #ADADAD; }
+    .search-row input[type="text"]:focus { border-color: rgba(255,255,255,0.55); background: rgba(255,255,255,0.18); }
+    .search-row input[type="text"]::placeholder { color: rgba(255,255,255,0.4); }
     .btn-search {
-      padding: 12px 24px; background: var(--accent); color: #fff; border: none;
+      padding: 11px 26px; background: #fff; color: var(--navy); border: none;
       border-radius: var(--radius-sm); font-family: inherit; font-size: 14px;
-      font-weight: 600; cursor: pointer; transition: background 0.2s; white-space: nowrap;
+      font-weight: 700; cursor: pointer; transition: background 0.2s; white-space: nowrap;
     }
-    .btn-search:hover { background: var(--accent-hover); }
-    .filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 28px; }
+    .btn-search:hover { background: #dce3ea; }
+
+    /* ── TOOLBAR ── */
+    .toolbar {
+      background: var(--surface);
+      border-bottom: 1.5px solid var(--border);
+      padding: 12px 36px;
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+      position: sticky; top: 62px; z-index: 100;
+    }
     .filter-chip {
-      padding: 6px 14px; border-radius: 999px; border: 1.5px solid var(--border);
+      display: flex; align-items: center; gap: 5px;
+      padding: 6px 13px; border-radius: 999px;
+      border: 1.5px solid var(--border);
       background: var(--surface); font-family: inherit; font-size: 13px;
       color: var(--text-secondary); cursor: pointer; transition: all 0.15s; font-weight: 500;
+      white-space: nowrap;
     }
-    .filter-chip:hover { border-color: var(--accent); color: var(--accent); }
-    .filter-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-    .results-meta { display: flex; align-items: center; margin-bottom: 18px; }
+    .filter-chip:hover { border-color: var(--navy); color: var(--navy); }
+    .filter-chip.active { background: var(--navy); border-color: var(--navy); color: #fff; }
+    .chip-icon { font-size: 13px; line-height: 1; }
+    .toolbar-spacer { flex: 1; min-width: 12px; }
+    .view-toggle {
+      display: flex; border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm); overflow: hidden;
+    }
+    .view-btn {
+      padding: 6px 14px; background: var(--surface); border: none;
+      font-family: inherit; font-size: 13px; font-weight: 500;
+      color: var(--text-secondary); cursor: pointer; transition: all 0.15s;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .view-btn + .view-btn { border-left: 1px solid var(--border); }
+    .view-btn.active { background: var(--navy); color: #fff; }
+    .view-btn:hover:not(.active) { background: var(--accent-light); }
+
+    /* ── MAIN CONTENT ── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 28px 24px 80px; }
+    .results-meta { margin-bottom: 16px; }
     .results-count { font-size: 13px; color: var(--text-secondary); }
     .results-count strong { color: var(--text-primary); }
-    .jobs-grid { display: flex; flex-direction: column; gap: 14px; }
+
+    /* ── JOB CARDS ── */
+    .jobs-grid { display: flex; flex-direction: column; gap: 12px; }
     .job-card {
       background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius);
-      padding: 22px 24px; display: flex; gap: 18px; align-items: flex-start;
+      padding: 18px 20px; display: flex; gap: 16px; align-items: flex-start;
       transition: box-shadow 0.2s, border-color 0.2s, transform 0.15s;
-      animation: fadeUp 0.3s ease both;
+      animation: fadeUp 0.3s ease both; box-shadow: var(--shadow);
     }
     .job-card:hover { box-shadow: var(--shadow-hover); border-color: #b0bec5; transform: translateY(-2px); }
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     .job-logo {
-      width: 48px; height: 48px; border-radius: 10px; background: var(--tag-bg);
+      width: 46px; height: 46px; border-radius: 10px; background: var(--tag-bg);
       border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
-      font-family: 'Fraunces', serif; font-size: 20px; font-weight: 700;
-      color: var(--accent); flex-shrink: 0;
+      font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700;
+      color: var(--navy); flex-shrink: 0; overflow: hidden;
     }
     .job-body { flex: 1; min-width: 0; }
-    .job-title { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 3px; line-height: 1.3; }
-    .job-company { font-size: 14px; color: var(--text-secondary); margin-bottom: 10px; }
-    .job-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
-    .tag { padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; background: var(--tag-bg); color: var(--text-secondary); }
-    .tag.remote { background: var(--accent-light); color: var(--accent); }
+    .job-title { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; line-height: 1.3; }
+    .job-company { font-size: 13px; color: var(--text-secondary); margin-bottom: 9px; }
+    .job-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 9px; }
+    .tag { padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; letter-spacing: 0.2px; }
+    .tag.default { background: var(--tag-bg); color: var(--text-secondary); }
+    .tag.remote { background: #E3F2FD; color: #1565C0; }
     .tag.new { background: #FFF3E0; color: #B85C00; }
-    .job-desc { font-size: 13.5px; color: var(--text-secondary); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    .job-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; flex-shrink: 0; }
-    .job-posted { font-size: 12px; color: #ADADAD; white-space: nowrap; }
+    .tag.salary { background: #E8F5E9; color: #2E7D32; }
+    .job-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .job-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
+    .job-posted { font-size: 11px; color: #ADADAD; white-space: nowrap; }
     .btn-apply {
-      padding: 9px 20px; background: var(--accent); color: #fff; border: none;
+      padding: 8px 16px; background: var(--navy); color: #fff; border: none;
       border-radius: var(--radius-sm); font-family: inherit; font-size: 13px;
       font-weight: 600; cursor: pointer; transition: background 0.2s;
       text-decoration: none; display: inline-block; white-space: nowrap;
     }
-    .btn-apply:hover { background: var(--accent-hover); }
+    .btn-apply:hover { background: var(--navy-dark); }
+
+    /* ── MAP ── */
+    #mapView { display: none; }
+    #mapContainer {
+      height: 560px; border-radius: var(--radius); overflow: hidden;
+      border: 1.5px solid var(--border); box-shadow: var(--shadow);
+    }
+    .leaflet-popup-content-wrapper { border-radius: 10px !important; box-shadow: var(--shadow-hover) !important; font-family: 'DM Sans', sans-serif !important; }
+    .map-popup-title { font-size: 14px; font-weight: 600; color: var(--navy); margin-bottom: 3px; }
+    .map-popup-company { font-size: 12px; color: var(--text-secondary); margin-bottom: 10px; }
+    .map-popup-apply {
+      display: inline-block; padding: 6px 14px; background: var(--navy);
+      color: #fff; border-radius: 7px; font-size: 12px; font-weight: 600;
+      text-decoration: none; transition: background 0.2s;
+    }
+    .map-popup-apply:hover { background: var(--navy-dark); }
+
+    /* ── STATES ── */
     .loading-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; gap: 14px; }
-    .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+    .spinner { width: 34px; height: 34px; border: 3px solid var(--border); border-top-color: var(--navy); border-radius: 50%; animation: spin 0.7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .loading-text { font-size: 14px; color: var(--text-secondary); }
     .empty-state { text-align: center; padding: 60px 20px; color: var(--text-secondary); }
-    .empty-state svg { margin-bottom: 12px; opacity: 0.4; }
-    .empty-state p { font-size: 15px; }
-    .empty-state small { font-size: 13px; margin-top: 4px; display: block; }
-    .pagination { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 36px; flex-wrap: wrap; }
+    .empty-state p { font-size: 15px; margin-bottom: 6px; }
+    .empty-state small { font-size: 13px; }
+
+    /* ── PAGINATION ── */
+    .pagination { display: flex; align-items: center; justify-content: center; gap: 7px; margin-top: 32px; flex-wrap: wrap; }
     .btn-page {
-      padding: 8px 16px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      padding: 7px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
       background: var(--surface); font-family: inherit; font-size: 13px;
       font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: all 0.15s;
     }
-    .btn-page:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
-    .btn-page:disabled { opacity: 0.4; cursor: not-allowed; }
-    .btn-page.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-    @media (max-width: 600px) {
-      .header { padding: 20px; }
-      .container { padding: 24px 16px 60px; }
-      .page-title { font-size: 28px; }
-      .job-card { flex-direction: column; gap: 12px; }
+    .btn-page:hover:not(:disabled) { border-color: var(--navy); color: var(--navy); }
+    .btn-page:disabled { opacity: 0.35; cursor: not-allowed; }
+    .btn-page.active { background: var(--navy); border-color: var(--navy); color: #fff; }
+
+    @media (max-width: 620px) {
+      .header, .hero, .toolbar { padding-left: 18px; padding-right: 18px; }
+      .container { padding: 20px 14px 60px; }
+      .hero h1 { font-size: 24px; }
+      .job-card { flex-wrap: wrap; }
       .job-actions { flex-direction: row; align-items: center; width: 100%; justify-content: space-between; }
     }
   </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <header class="header">
-  <div class="header-logo">FutureSelf</div>
-  <div class="header-divider"></div>
-  <div class="header-subtitle">Powered by Hivebright</div>
+  <a class="header-logo" href="#">
+    <div class="header-logo-ring">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="2" y1="12" x2="22" y2="12"/>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z"/>
+      </svg>
+    </div>
+    <span class="header-brand">FutureSelf</span>
+  </a>
+  <div class="header-sep"></div>
+  <span class="header-page">Internships</span>
 </header>
 
-<div class="container">
-
-  <h1 class="page-title">Find Your Internship</h1>
-  <p class="page-subtitle">Explore live opportunities matched to where you're headed.</p>
+<!-- HERO / SEARCH -->
+<div class="hero">
+  <h1>Find Your Internship</h1>
+  <p>Explore live opportunities matched to where you're headed.</p>
   <div class="search-row">
     <div class="search-input-wrap">
-      <svg class="search-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <svg class="input-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2">
         <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
       </svg>
       <input type="text" id="keywordInput" placeholder="Role, company, or skill…" />
     </div>
     <div class="location-input-wrap">
-      <svg class="loc-icon" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <svg class="input-icon" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2">
         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
       </svg>
-      <input type="text" id="locationInput" placeholder="City or Remote" />
+      <input type="text" id="locationInput" placeholder="Location" />
     </div>
     <button class="btn-search" onclick="runSearch()">Search</button>
   </div>
+</div>
 
-  <div class="filter-row">
-    <button class="filter-chip active" data-type="all" onclick="toggleChip(this)">All</button>
-    <button class="filter-chip" data-type="technology" onclick="toggleChip(this)">Technology</button>
-    <button class="filter-chip" data-type="business" onclick="toggleChip(this)">Business &amp; Finance</button>
-    <button class="filter-chip" data-type="marketing" onclick="toggleChip(this)">Marketing</button>
-    <button class="filter-chip" data-type="engineering" onclick="toggleChip(this)">Engineering</button>
-    <button class="filter-chip" data-type="legal" onclick="toggleChip(this)">Legal</button>
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <button class="filter-chip active" data-type="all" onclick="toggleChip(this)">
+    <span class="chip-icon">🔍</span> All
+  </button>
+  <button class="filter-chip" data-type="technology" onclick="toggleChip(this)">
+    <span class="chip-icon">💻</span> Technology
+  </button>
+  <button class="filter-chip" data-type="business" onclick="toggleChip(this)">
+    <span class="chip-icon">📈</span> Business &amp; Finance
+  </button>
+  <button class="filter-chip" data-type="marketing" onclick="toggleChip(this)">
+    <span class="chip-icon">📣</span> Marketing
+  </button>
+  <button class="filter-chip" data-type="engineering" onclick="toggleChip(this)">
+    <span class="chip-icon">⚙️</span> Engineering
+  </button>
+  <button class="filter-chip" data-type="legal" onclick="toggleChip(this)">
+    <span class="chip-icon">⚖️</span> Legal
+  </button>
+  <button class="filter-chip" data-type="remote" onclick="toggleChip(this)">
+    <span class="chip-icon">🌐</span> Remote
+  </button>
+
+  <div class="toolbar-spacer"></div>
+
+  <div class="view-toggle">
+    <button class="view-btn active" id="btnList" onclick="switchView('list')">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+        <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+      </svg>
+      List
+    </button>
+    <button class="view-btn" id="btnMap" onclick="switchView('map')">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+        <line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/>
+      </svg>
+      Map
+    </button>
   </div>
+</div>
 
+<!-- MAIN -->
+<div class="container">
   <div class="results-meta" id="resultsMeta" style="display:none">
     <div class="results-count" id="resultsCount"></div>
   </div>
 
-  <div id="jobsContainer">
-    <div class="loading-state">
-      <div class="spinner"></div>
-      <div class="loading-text">Loading internships…</div>
+  <!-- LIST VIEW -->
+  <div id="listView">
+    <div id="jobsContainer">
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <div class="loading-text">Loading internships…</div>
+      </div>
     </div>
+    <div class="pagination" id="pagination" style="display:none"></div>
   </div>
 
-  <div class="pagination" id="pagination" style="display:none"></div>
-
+  <!-- MAP VIEW -->
+  <div id="mapView">
+    <div id="mapContainer"></div>
+  </div>
 </div>
 
 <script>
-  // ─────────────────────────────────────────────────
-  //  CONFIG — Replace with your Adzuna credentials
-  //  Free account at: https://developer.adzuna.com
-  // ─────────────────────────────────────────────────
-  const ADZUNA_APP_ID  = '69eaa437';
-  const ADZUNA_APP_KEY = '485347abe52dfaf7f89b7dd86b520bc1';
-  const ADZUNA_COUNTRY = 'us';
   const PER_PAGE = 10;
-
   const CATEGORY_KEYWORDS = {
     all:         'internship',
-    technology:  'technology internship',
+    technology:  'technology software internship',
     business:    'business finance internship',
     marketing:   'marketing internship',
     engineering: 'engineering internship',
     legal:       'legal law internship',
+    remote:      'remote internship',
+  };
+  const CAT_COLORS = {
+    'it-jobs':                '#3B82F6',
+    'engineering-jobs':       '#F59E0B',
+    'accounting-finance-jobs':'#10B981',
+    'legal-jobs':             '#8B5CF6',
+    'sales-jobs':             '#EF4444',
+    'marketing-jobs':         '#EC4899',
+    'admin-jobs':             '#6B7280',
+    'default':                '#2C3E50',
   };
 
-  let currentPage   = 1;
-  let totalResults  = 0;
-  let totalPages    = 1;
+  let currentPage    = 1;
+  let totalResults   = 0;
+  let totalPages     = 1;
   let activeCategory = 'all';
+  let currentView    = 'list';
+  let mapInstance    = null;
+  let lastJobs       = [];
 
-  // Filter chip toggle — only one active at a time
   function toggleChip(el) {
     document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
     el.classList.add('active');
@@ -208,13 +342,23 @@
     runSearch(1);
   }
 
-  // Build keyword: always internship + category
   function buildQuery(keyword) {
     const base = CATEGORY_KEYWORDS[activeCategory] || 'internship';
     return keyword ? `${keyword} ${base}` : base;
   }
 
-  // Run a search
+  function switchView(view) {
+    currentView = view;
+    document.getElementById('listView').style.display = view === 'list' ? 'block' : 'none';
+    document.getElementById('mapView').style.display  = view === 'map'  ? 'block' : 'none';
+    document.getElementById('btnList').classList.toggle('active', view === 'list');
+    document.getElementById('btnMap').classList.toggle('active',  view === 'map');
+    if (view === 'map') {
+      if (lastJobs.length) renderMap(lastJobs);
+      else runSearch(1);
+    }
+  }
+
   function runSearch(page = 1) {
     currentPage = page;
     const keyword  = document.getElementById('keywordInput').value.trim();
@@ -222,25 +366,23 @@
     fetchJobs(buildQuery(keyword), location, page);
   }
 
-  // Fetch live data from Adzuna
   async function fetchJobs(query, location, page) {
     showLoading();
-    // Calls your Cloudflare Worker which handles Adzuna + CORS
     const params = new URLSearchParams({ page, what: query });
     if (location) params.append('where', location);
-
     const url = `https://apibeast.noahd2406.workers.dev/?${params}`;
     try {
       const res  = await fetch(url);
-      if (!res.ok) throw new Error(`API error ${res.status}: ${res.statusText}`);
+      if (!res.ok) throw new Error(`API error ${res.status}`);
       const data = await res.json();
+      lastJobs = data.results || [];
       renderJobs(data, page);
+      if (currentView === 'map') renderMap(lastJobs);
     } catch (err) {
       showError(err.message);
     }
   }
 
-  // Render job card list
   function renderJobs(data, page) {
     const container = document.getElementById('jobsContainer');
     const meta      = document.getElementById('resultsMeta');
@@ -251,22 +393,14 @@
     totalPages   = Math.min(Math.ceil(totalResults / PER_PAGE), 20);
 
     if (jobs.length === 0) {
-      container.innerHTML = `
-        <div class="empty-state">
-          <svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
-            <circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/>
-          </svg>
-          <p>No internships found for that search.</p>
-          <small>Try different keywords or location.</small>
-        </div>`;
+      container.innerHTML = `<div class="empty-state"><p>No internships found.</p><small>Try different keywords or location.</small></div>`;
       meta.style.display = 'none';
       document.getElementById('pagination').style.display = 'none';
       return;
     }
 
-    meta.style.display = 'flex';
+    meta.style.display = 'block';
     countEl.innerHTML  = `<strong>${totalResults.toLocaleString()}</strong> internships found &mdash; page ${page} of ${totalPages}`;
-
     container.innerHTML = '';
     const grid = document.createElement('div');
     grid.className = 'jobs-grid';
@@ -275,9 +409,8 @@
     renderPagination(page);
   }
 
-  // Build a single card element
   function buildCard(job, delay) {
-    const card     = document.createElement('div');
+    const card = document.createElement('div');
     card.className = 'job-card';
     card.style.animationDelay = `${delay * 40}ms`;
 
@@ -286,21 +419,30 @@
     const isRemote = location.toLowerCase().includes('remote') || (job.title||'').toLowerCase().includes('remote');
     const daysAgo  = job.created ? Math.floor((Date.now() - new Date(job.created)) / 86400000) : null;
     const isNew    = daysAgo !== null && daysAgo <= 3;
-    const desc     = (job.description || 'No description available.').replace(/<[^>]*>/g,'').slice(0,200) + '…';
+    const desc     = (job.description || 'No description available.').replace(/<[^>]*>/g,'').slice(0,180) + '…';
     const applyUrl = job.redirect_url || '#';
     const salary   = job.salary_min && job.salary_max
-      ? `$${Math.round(job.salary_min/1000)}k – $${Math.round(job.salary_max/1000)}k` : null;
+      ? `$${Math.round(job.salary_min/1000)}k–$${Math.round(job.salary_max/1000)}k` : null;
+
+    const domain  = company.toLowerCase().replace(/[^a-z0-9 ]/g,'').trim().split(' ')[0] + '.com';
+    const logoUrl = `https://logo.clearbit.com/${domain}`;
+    const initial = esc(company[0]?.toUpperCase() || '?');
 
     card.innerHTML = `
-      <div class="job-logo">${esc(company[0].toUpperCase())}</div>
+      <div class="job-logo">
+        <img src="${logoUrl}" alt="${esc(company)}"
+          style="width:100%;height:100%;object-fit:contain;border-radius:10px;"
+          onerror="this.style.display='none';this.parentNode.innerText='${initial}'"
+        />
+      </div>
       <div class="job-body">
         <div class="job-title">${esc(job.title || 'Internship')}</div>
         <div class="job-company">${esc(company)} &middot; ${esc(location)}</div>
         <div class="job-tags">
-          ${isRemote ? '<span class="tag remote">Remote</span>' : ''}
-          ${isNew    ? '<span class="tag new">New</span>'       : ''}
-          ${salary   ? `<span class="tag">${esc(salary)}</span>` : ''}
-          ${job.contract_time ? `<span class="tag">${esc(job.contract_time.replace('_',' '))}</span>` : ''}
+          ${isRemote ? '<span class="tag remote">🌐 Remote</span>' : ''}
+          ${isNew    ? '<span class="tag new">✨ New</span>' : ''}
+          ${salary   ? `<span class="tag salary">💰 ${esc(salary)}</span>` : ''}
+          ${job.contract_time ? `<span class="tag default">${esc(job.contract_time.replace('_',' '))}</span>` : ''}
         </div>
         <div class="job-desc">${esc(desc)}</div>
       </div>
@@ -311,7 +453,38 @@
     return card;
   }
 
-  // Pagination controls
+  function renderMap(jobs) {
+    if (!mapInstance) {
+      mapInstance = L.map('mapContainer').setView([39.5, -98.35], 4);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 19
+      }).addTo(mapInstance);
+    } else {
+      mapInstance.eachLayer(layer => {
+        if (layer instanceof L.CircleMarker) mapInstance.removeLayer(layer);
+      });
+    }
+
+    jobs.forEach(job => {
+      if (!job.latitude || !job.longitude) return;
+      const color   = CAT_COLORS[job.category?.tag] || CAT_COLORS.default;
+      const company = job.company?.display_name || 'Unknown';
+      const applyUrl = job.redirect_url || '#';
+
+      L.circleMarker([job.latitude, job.longitude], {
+        radius: 9, fillColor: color, color: '#fff',
+        weight: 2, opacity: 1, fillOpacity: 0.88
+      }).addTo(mapInstance).bindPopup(`
+        <div style="font-family:'DM Sans',sans-serif;min-width:190px;">
+          <div class="map-popup-title">${esc(job.title || 'Internship')}</div>
+          <div class="map-popup-company">${esc(company)} &middot; ${esc(job.location?.display_name || '')}</div>
+          <a class="map-popup-apply" href="${applyUrl}" target="_blank" rel="noopener">View &amp; Apply &rarr;</a>
+        </div>`);
+    });
+
+    setTimeout(() => mapInstance.invalidateSize(), 100);
+  }
+
   function renderPagination(current) {
     const pg = document.getElementById('pagination');
     if (totalPages <= 1) { pg.style.display = 'none'; return; }
@@ -325,7 +498,9 @@
     let start = Math.max(1, current - 2), end = Math.min(totalPages, start + 4);
     if (end - start < 4) start = Math.max(1, end - 4);
     for (let p = start; p <= end; p++) {
-      const btn = Object.assign(document.createElement('button'), { className: 'btn-page' + (p===current?' active':''), textContent: p });
+      const btn = Object.assign(document.createElement('button'), {
+        className: 'btn-page' + (p === current ? ' active' : ''), textContent: p
+      });
       const pp = p; btn.onclick = () => runSearch(pp);
       pg.appendChild(btn);
     }
@@ -342,27 +517,17 @@
   }
 
   function showError(msg) {
-    document.getElementById('jobsContainer').innerHTML = `
-      <div class="empty-state">
-        <svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
-          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-        </svg>
-        <p>Something went wrong.</p>
-        <small>${esc(msg)}</small>
-        <small style="margin-top:8px">Check your Adzuna App ID and App Key are correct.</small>
-      </div>`;
+    document.getElementById('jobsContainer').innerHTML = `<div class="empty-state"><p>Something went wrong.</p><small>${esc(msg)}</small></div>`;
   }
 
   function esc(s) {
     return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
-  // Enter key support
   ['keywordInput','locationInput'].forEach(id =>
-    document.getElementById(id).addEventListener('keydown', e => { if (e.key==='Enter') runSearch(); })
+    document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') runSearch(); })
   );
 
-  // Auto-load on page open
   window.addEventListener('DOMContentLoaded', () => runSearch());
 </script>
 </body>
