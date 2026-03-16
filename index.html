@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FutureSelf — Internships</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Fraunces:wght@600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #F0F2F4;
+      --surface: #FFFFFF;
+      --border: #D5DAE0;
+      --text-primary: #2C3E50;
+      --text-secondary: #5D6D7E;
+      --accent: #2C3E50;
+      --accent-light: #E8ECF0;
+      --accent-hover: #1A252F;
+      --tag-bg: #EAEef1;
+      --shadow-hover: 0 6px 28px rgba(44,62,80,0.15);
+      --radius: 14px;
+      --radius-sm: 8px;
+    }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text-primary); min-height: 100vh; }
+    .header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 40px; display: flex; align-items: center; gap: 16px; }
+    .header-logo { font-family: 'Fraunces', serif; font-size: 22px; color: var(--accent); letter-spacing: -0.5px; }
+    .header-divider { width: 1px; height: 36px; background: var(--border); }
+    .header-icon img { width: 48px; height: 48px; display: block; object-fit: contain; }
+    .container { max-width: 1080px; margin: 0 auto; padding: 40px 24px 80px; }
+    .page-title { font-family: 'Fraunces', serif; font-size: 36px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.8px; }
+    .page-subtitle { font-size: 15px; color: var(--text-secondary); margin-bottom: 32px; }
+    .search-row { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+    .search-input-wrap { position: relative; flex: 1; min-width: 220px; }
+    .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); pointer-events: none; }
+    .location-input-wrap { position: relative; min-width: 180px; }
+    .loc-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); pointer-events: none; }
+    input[type="text"] {
+      width: 100%; padding: 12px 16px 12px 40px; border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm); font-family: inherit; font-size: 14px;
+      background: var(--surface); color: var(--text-primary); transition: border-color 0.2s; outline: none;
+    }
+    input[type="text"]:focus { border-color: var(--accent); }
+    input[type="text"]::placeholder { color: #ADADAD; }
+    .btn-search {
+      padding: 12px 24px; background: var(--accent); color: #fff; border: none;
+      border-radius: var(--radius-sm); font-family: inherit; font-size: 14px;
+      font-weight: 600; cursor: pointer; transition: background 0.2s; white-space: nowrap;
+    }
+    .btn-search:hover { background: var(--accent-hover); }
+    .filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 28px; }
+    .filter-chip {
+      padding: 6px 14px; border-radius: 999px; border: 1.5px solid var(--border);
+      background: var(--surface); font-family: inherit; font-size: 13px;
+      color: var(--text-secondary); cursor: pointer; transition: all 0.15s; font-weight: 500;
+    }
+    .filter-chip:hover { border-color: var(--accent); color: var(--accent); }
+    .filter-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .results-meta { display: flex; align-items: center; margin-bottom: 18px; }
+    .results-count { font-size: 13px; color: var(--text-secondary); }
+    .results-count strong { color: var(--text-primary); }
+    .jobs-grid { display: flex; flex-direction: column; gap: 14px; }
+    .job-card {
+      background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius);
+      padding: 22px 24px; display: flex; gap: 18px; align-items: flex-start;
+      transition: box-shadow 0.2s, border-color 0.2s, transform 0.15s;
+      animation: fadeUp 0.3s ease both;
+    }
+    .job-card:hover { box-shadow: var(--shadow-hover); border-color: #b0bec5; transform: translateY(-2px); }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .job-logo {
+      width: 48px; height: 48px; border-radius: 10px; background: var(--tag-bg);
+      border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
+      font-family: 'Fraunces', serif; font-size: 20px; font-weight: 700;
+      color: var(--accent); flex-shrink: 0;
+    }
+    .job-body { flex: 1; min-width: 0; }
+    .job-title { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 3px; line-height: 1.3; }
+    .job-company { font-size: 14px; color: var(--text-secondary); margin-bottom: 10px; }
+    .job-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+    .tag { padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; background: var(--tag-bg); color: var(--text-secondary); }
+    .tag.remote { background: var(--accent-light); color: var(--accent); }
+    .tag.new { background: #FFF3E0; color: #B85C00; }
+    .job-desc { font-size: 13.5px; color: var(--text-secondary); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .job-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; flex-shrink: 0; }
+    .job-posted { font-size: 12px; color: #ADADAD; white-space: nowrap; }
+    .btn-apply {
+      padding: 9px 20px; background: var(--accent); color: #fff; border: none;
+      border-radius: var(--radius-sm); font-family: inherit; font-size: 13px;
+      font-weight: 600; cursor: pointer; transition: background 0.2s;
+      text-decoration: none; display: inline-block; white-space: nowrap;
+    }
+    .btn-apply:hover { background: var(--accent-hover); }
+    .loading-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; gap: 14px; }
+    .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text { font-size: 14px; color: var(--text-secondary); }
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--text-secondary); }
+    .empty-state svg { margin-bottom: 12px; opacity: 0.4; }
+    .empty-state p { font-size: 15px; }
+    .empty-state small { font-size: 13px; margin-top: 4px; display: block; }
+    .pagination { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 36px; flex-wrap: wrap; }
+    .btn-page {
+      padding: 8px 16px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      background: var(--surface); font-family: inherit; font-size: 13px;
+      font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: all 0.15s;
+    }
+    .btn-page:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+    .btn-page:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-page.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    @media (max-width: 600px) {
+      .header { padding: 20px; }
+      .container { padding: 24px 16px 60px; }
+      .page-title { font-size: 28px; }
+      .job-card { flex-direction: column; gap: 12px; }
+      .job-actions { flex-direction: row; align-items: center; width: 100%; justify-content: space-between; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-logo">FutureSelf</div>
+  <div class="header-divider"></div>
+  <div class="header-icon">
+    <img src="data:image/webp;base64,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" alt="FutureSelf logo" />
+  </div>
+</header>
+
+<div class="container">
+
+  <h1 class="page-title">Find Your Internship</h1>
+  <p class="page-subtitle">Explore live opportunities matched to where you're headed.</p>
+
+  <div class="search-row">
+    <div class="search-input-wrap">
+      <svg class="search-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input type="text" id="keywordInput" placeholder="Role, company, or skill…" />
+    </div>
+    <div class="location-input-wrap">
+      <svg class="loc-icon" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
+      </svg>
+      <input type="text" id="locationInput" placeholder="City or Remote" />
+    </div>
+    <button class="btn-search" onclick="runSearch()">Search</button>
+  </div>
+
+  <div class="filter-row">
+    <button class="filter-chip active" data-type="internship" onclick="toggleChip(this)">Internship</button>
+    <button class="filter-chip" data-type="remote" onclick="toggleChip(this)">Remote</button>
+    <button class="filter-chip" data-type="part_time" onclick="toggleChip(this)">Part-time</button>
+    <button class="filter-chip" data-type="full_time" onclick="toggleChip(this)">Full-time</button>
+    <button class="filter-chip" data-type="entry_level" onclick="toggleChip(this)">Entry Level</button>
+  </div>
+
+  <div class="results-meta" id="resultsMeta" style="display:none">
+    <div class="results-count" id="resultsCount"></div>
+  </div>
+
+  <div id="jobsContainer">
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <div class="loading-text">Loading internships…</div>
+    </div>
+  </div>
+
+  <div class="pagination" id="pagination" style="display:none"></div>
+
+</div>
+
+<script>
+  // ─────────────────────────────────────────────────
+  //  Active Jobs DB — RapidAPI
+  //  Endpoint: Ultra - Get Jobs Hourly (active-ats-1h)
+  // ─────────────────────────────────────────────────
+  const RAPIDAPI_KEY  = 'ee093b19acmshab84398e26e16a9p12e9ccjsn5c8464a04669';
+  const RAPIDAPI_HOST = 'active-jobs-db.p.rapidapi.com';
+  const PER_PAGE = 10;
+
+  let currentPage  = 1;
+  let totalResults = 0;
+  let totalPages   = 1;
+  let activeFilters = new Set(['internship']);
+  let allJobs = []; // cache all results for client-side pagination
+
+  // Filter chip toggle
+  function toggleChip(el) {
+    const type = el.dataset.type;
+    if (el.classList.contains('active')) {
+      if (activeFilters.size === 1) return; // keep at least one active
+      el.classList.remove('active');
+      activeFilters.delete(type);
+    } else {
+      el.classList.add('active');
+      activeFilters.add(type);
+    }
+  }
+
+  // Build the title_filter string
+  function buildTitleFilter(keyword) {
+    const parts = [];
+    if (keyword) parts.push(keyword);
+    if (activeFilters.has('internship')) parts.push('intern');
+    if (activeFilters.has('entry_level')) parts.push('junior');
+    return parts.length ? parts.join(' ') : 'intern';
+  }
+
+  // Kick off a search
+  function runSearch(page = 1) {
+    currentPage = page;
+    if (page === 1) {
+      const keyword  = document.getElementById('keywordInput').value.trim();
+      const location = document.getElementById('locationInput').value.trim();
+      fetchJobs(keyword, location);
+    } else {
+      renderPage(page);
+    }
+  }
+
+  // Fetch live data from Active Jobs DB
+  async function fetchJobs(keyword, location) {
+    showLoading();
+
+    const titleFilter    = buildTitleFilter(keyword);
+    let   locationFilter = location || 'United States';
+    if (activeFilters.has('remote')) locationFilter = 'Remote';
+
+    const params = new URLSearchParams({
+      offset:           0,
+      title_filter:     `"${titleFilter}"`,
+      location_filter:  `"${locationFilter}"`,
+      description_type: 'text'
+    });
+
+    const url = `https://${RAPIDAPI_HOST}/active-ats-1h?${params}`;
+
+    try {
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'x-rapidapi-host': RAPIDAPI_HOST,
+          'x-rapidapi-key':  RAPIDAPI_KEY
+        }
+      });
+
+      if (!res.ok) throw new Error(`API error ${res.status}: ${res.statusText}`);
+      const data = await res.json();
+
+      // Active Jobs DB returns a plain array
+      allJobs      = Array.isArray(data) ? data : (data.jobs || data.results || []);
+      totalResults = allJobs.length;
+      totalPages   = Math.max(1, Math.ceil(totalResults / PER_PAGE));
+      renderPage(1);
+    } catch (err) {
+      showError(err.message);
+    }
+  }
+
+  // Slice allJobs for the requested page and render cards
+  function renderPage(page) {
+    currentPage = page;
+    const container = document.getElementById('jobsContainer');
+    const meta      = document.getElementById('resultsMeta');
+    const countEl   = document.getElementById('resultsCount');
+
+    const start = (page - 1) * PER_PAGE;
+    const jobs  = allJobs.slice(start, start + PER_PAGE);
+
+    if (jobs.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
+            <circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/>
+          </svg>
+          <p>No internships found for that search.</p>
+          <small>Try different keywords or location.</small>
+        </div>`;
+      meta.style.display = 'none';
+      document.getElementById('pagination').style.display = 'none';
+      return;
+    }
+
+    meta.style.display = 'flex';
+    countEl.innerHTML  = `<strong>${totalResults.toLocaleString()}</strong> internships found &mdash; page ${page} of ${totalPages}`;
+
+    container.innerHTML = '';
+    const grid = document.createElement('div');
+    grid.className = 'jobs-grid';
+    jobs.forEach((job, i) => grid.appendChild(buildCard(job, i)));
+    container.appendChild(grid);
+    renderPagination(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Build a single job card from Active Jobs DB fields
+  function buildCard(job, delay) {
+    const card = document.createElement('div');
+    card.className = 'job-card';
+    card.style.animationDelay = `${delay * 40}ms`;
+
+    const title    = job.title    || job.job_title  || 'Internship';
+    const company  = job.company  || job.employer   || job.organization || 'Unknown Company';
+    const location = job.location || job.job_location || 'Location not listed';
+    const applyUrl = job.url      || job.apply_url  || job.job_url || '#';
+    const desc     = (job.description || job.job_description || 'No description available.')
+                       .replace(/<[^>]*>/g, '').slice(0, 200) + '…';
+
+    const dateStr = job.date_posted || job.posted_at || job.created_at || null;
+    const daysAgo = dateStr ? Math.floor((Date.now() - new Date(dateStr)) / 86400000) : null;
+    const isNew   = daysAgo !== null && daysAgo <= 3;
+    const isRemote = location.toLowerCase().includes('remote') || title.toLowerCase().includes('remote');
+    const jobType  = job.job_type || job.employment_type || null;
+
+    card.innerHTML = `
+      <div class="job-logo">${esc(company[0].toUpperCase())}</div>
+      <div class="job-body">
+        <div class="job-title">${esc(title)}</div>
+        <div class="job-company">${esc(company)} &middot; ${esc(location)}</div>
+        <div class="job-tags">
+          ${isRemote ? '<span class="tag remote">Remote</span>' : ''}
+          ${isNew    ? '<span class="tag new">New</span>'       : ''}
+          ${jobType  ? `<span class="tag">${esc(jobType)}</span>` : ''}
+        </div>
+        <div class="job-desc">${esc(desc)}</div>
+      </div>
+      <div class="job-actions">
+        <span class="job-posted">${daysAgo === 0 ? 'Today' : daysAgo != null ? `${daysAgo}d ago` : ''}</span>
+        <a class="btn-apply" href="${applyUrl}" target="_blank" rel="noopener">Apply &rarr;</a>
+      </div>`;
+    return card;
+  }
+
+  // Pagination controls
+  function renderPagination(current) {
+    const pg = document.getElementById('pagination');
+    if (totalPages <= 1) { pg.style.display = 'none'; return; }
+    pg.style.display = 'flex';
+    pg.innerHTML = '';
+
+    const prev = Object.assign(document.createElement('button'), { className:'btn-page', textContent:'← Prev', disabled: current === 1 });
+    prev.onclick = () => runSearch(current - 1);
+    pg.appendChild(prev);
+
+    let start = Math.max(1, current - 2), end = Math.min(totalPages, start + 4);
+    if (end - start < 4) start = Math.max(1, end - 4);
+    for (let p = start; p <= end; p++) {
+      const btn = Object.assign(document.createElement('button'), { className: 'btn-page' + (p===current?' active':''), textContent: p });
+      const pp = p; btn.onclick = () => runSearch(pp);
+      pg.appendChild(btn);
+    }
+
+    const next = Object.assign(document.createElement('button'), { className:'btn-page', textContent:'Next →', disabled: current === totalPages });
+    next.onclick = () => runSearch(current + 1);
+    pg.appendChild(next);
+  }
+
+  function showLoading() {
+    document.getElementById('jobsContainer').innerHTML = `<div class="loading-state"><div class="spinner"></div><div class="loading-text">Searching internships…</div></div>`;
+    document.getElementById('resultsMeta').style.display = 'none';
+    document.getElementById('pagination').style.display  = 'none';
+  }
+
+  function showError(msg) {
+    document.getElementById('jobsContainer').innerHTML = `
+      <div class="empty-state">
+        <svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <p>Something went wrong.</p>
+        <small>${esc(msg)}</small>
+      </div>`;
+  }
+
+  function esc(s) {
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // Enter key support
+  ['keywordInput','locationInput'].forEach(id =>
+    document.getElementById(id).addEventListener('keydown', e => { if (e.key==='Enter') runSearch(); })
+  );
+
+  // Auto-load on page open
+  window.addEventListener('DOMContentLoaded', () => runSearch());
+</script>
+</body>
+</html>
