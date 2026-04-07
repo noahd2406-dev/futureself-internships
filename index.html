@@ -146,6 +146,16 @@
     .job-desc.expanded { display: block !important; overflow: visible !important; }
     .btn-expand { background: none; border: none; font-family: inherit; font-size: 12px; color: var(--navy); cursor: pointer; padding: 4px 0; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; }
     .btn-expand:hover { text-decoration: underline; }
+    .date-chip {
+      padding: 5px 12px; border-radius: 999px;
+      border: 1.5px solid var(--border);
+      background: var(--surface); font-family: inherit; font-size: 12px;
+      color: var(--text-secondary); cursor: pointer; transition: all 0.15s; font-weight: 500;
+      white-space: nowrap;
+    }
+    .date-chip:hover { border-color: var(--navy); color: var(--navy); }
+    .date-chip.active { background: var(--navy); border-color: var(--navy); color: #fff; }
+
     .btn-bookmark {
       background: none; border: none; cursor: pointer; padding: 4px;
       font-size: 18px; line-height: 1; transition: all 0.15s;
