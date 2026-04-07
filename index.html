@@ -146,6 +146,13 @@
     .job-desc.expanded { display: block !important; overflow: visible !important; }
     .btn-expand { background: none; border: none; font-family: inherit; font-size: 12px; color: var(--navy); cursor: pointer; padding: 4px 0; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; }
     .btn-expand:hover { text-decoration: underline; }
+    .btn-bookmark {
+      background: none; border: none; cursor: pointer; padding: 4px;
+      font-size: 18px; line-height: 1; transition: all 0.15s;
+      flex-shrink: 0; opacity: 0.4;
+    }
+    .btn-bookmark:hover { opacity: 0.7; }
+    .btn-bookmark.saved { opacity: 1; }
     .job-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
     .job-posted { font-size: 11px; color: #ADADAD; white-space: nowrap; }
     .btn-apply {
@@ -273,6 +280,9 @@
     <div class="results-meta" id="resultsMeta" style="display:none">
       <div class="results-count" id="resultsCount"></div>
     </div>
+    <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+      <button class="date-chip" id="savedToggle" onclick="toggleSavedView()" style="flex-shrink:0;">⭐ Saved (<span id="savedCount">0</span>)</button>
+    </div>
     <div class="view-toggle" style="flex-shrink:0;">
       <button class="view-btn active" id="btnList" onclick="switchView('list')">
         <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -337,6 +347,58 @@
   };
 
   let currentPage    = 1;
+  let showingSaved   = false;
+  let savedJobs      = JSON.parse(localStorage.getItem('fs_intern_saved') || '{}');
+  const jobCache     = {};
+
+  function updateSavedCount() {
+    const count = Object.keys(savedJobs).length;
+    document.getElementById('savedCount').textContent = count;
+  }
+
+  function toggleSave(id) {
+    const job = jobCache[id];
+    if (savedJobs[id]) {
+      delete savedJobs[id];
+    } else if (job) {
+      savedJobs[id] = job;
+    }
+    localStorage.setItem('fs_intern_saved', JSON.stringify(savedJobs));
+    updateSavedCount();
+    const btn = document.querySelector(`[data-jobid="${id}"]`);
+    if (btn) {
+      const isSaved = !!savedJobs[id];
+      btn.classList.toggle('saved', isSaved);
+      btn.innerHTML = isSaved ? '★' : '☆';
+    }
+  }
+
+  function toggleSavedView() {
+    showingSaved = !showingSaved;
+    const btn = document.getElementById('savedToggle');
+    if (showingSaved) {
+      btn.classList.add('active');
+      const jobs = Object.values(savedJobs);
+      if (jobs.length === 0) {
+        document.getElementById('jobsContainer').innerHTML = '<div class="empty-state"><p>No saved internships yet.</p><small>Click the ☆ on any listing to save it.</small></div>';
+        document.getElementById('resultsMeta').style.display = 'none';
+        document.getElementById('pagination').style.display = 'none';
+      } else {
+        document.getElementById('resultsMeta').style.display = 'block';
+        document.getElementById('resultsCount').innerHTML = `<strong>${jobs.length}</strong> saved internships`;
+        const container = document.getElementById('jobsContainer');
+        container.innerHTML = '';
+        const grid = document.createElement('div');
+        grid.className = 'jobs-grid';
+        jobs.forEach((job, i) => grid.appendChild(buildCard(job, i)));
+        container.appendChild(grid);
+        document.getElementById('pagination').style.display = 'none';
+      }
+    } else {
+      btn.classList.remove('active');
+      runSearch(1);
+    }
+  }
   let activeExtraFilter = 'all';
   let totalResults   = 0;
   let totalPages     = 1;
@@ -547,10 +609,16 @@
       <div class="job-desc" id="${descId}">${esc(descFull)}</div>
       ${descFull.length > 200 ? `<button class="btn-expand" onclick="toggleDesc('${descId}', this)">Show more ▼</button>` : ''}`;
 
+    const isSaved = !!savedJobs[job.id];
+    jobCache[job.id] = job;
+
     const actions = document.createElement('div');
     actions.className = 'job-actions';
     actions.innerHTML = `
       <span class="job-posted">${daysAgo === 0 ? 'Today' : daysAgo != null ? `${daysAgo}d ago` : ''}</span>
+      <button class="btn-bookmark${isSaved ? ' saved' : ''}" data-jobid="${job.id}" onclick="toggleSave('${job.id}')">
+        ${isSaved ? '★' : '☆'}
+      </button>
       <a class="btn-apply" href="${applyUrl}" target="_blank" rel="noopener">Apply &rarr;</a>`;
 
     card.appendChild(logoDiv);
@@ -666,7 +734,7 @@
     document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') runSearch(); })
   );
 
-  window.addEventListener('DOMContentLoaded', () => runSearch());
+  window.addEventListener('DOMContentLoaded', () => { updateSavedCount(); runSearch(); });
 </script>
 </body>
 </html>
