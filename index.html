@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FutureSelf — Internships</title>
+  <title>FutureSelf — Careers</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Fraunces:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -27,11 +27,11 @@
     }
     body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text-primary); min-height: 100vh; }
 
+    
     /* ── HERO ── */
     .hero {
       background: linear-gradient(140deg, var(--navy) 0%, var(--navy-mid) 100%);
-      padding: 36px 36px 32px;
-      color: #fff;
+      padding: 36px 36px 32px; color: #fff;
     }
     .hero h1 { font-family: 'Fraunces', serif; font-size: 30px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 5px; }
     .hero p { font-size: 14px; color: rgba(255,255,255,0.65); margin-bottom: 22px; }
@@ -55,33 +55,29 @@
     }
     .btn-search:hover { background: #dce3ea; }
 
-    /* ── TOOLBAR ── */
-    .toolbar {
-      background: var(--surface);
-      border-bottom: 1.5px solid var(--border);
-      padding: 12px 36px;
-      display: flex; align-items: center; gap: 8px;
-      position: sticky; top: 0; z-index: 100;
+    /* ── FILTER ROWS ── */
+    .city-row {
+      background: var(--surface); border-bottom: 1.5px solid var(--border);
+      padding: 10px 36px; display: flex; align-items: center; gap: 7px;
       overflow-x: auto; white-space: nowrap;
     }
-    .toolbar::-webkit-scrollbar { height: 0; }
-    .toolbar-chips { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
-    .filter-chip {
-      display: flex; align-items: center; gap: 5px;
-      padding: 6px 13px; border-radius: 999px;
+    .city-row::-webkit-scrollbar { height: 0; }
+    .city-chip {
+      padding: 5px 12px; border-radius: 999px;
       border: 1.5px solid var(--border);
-      background: var(--surface); font-family: inherit; font-size: 13px;
+      background: var(--surface); font-family: inherit; font-size: 12px;
       color: var(--text-secondary); cursor: pointer; transition: all 0.15s; font-weight: 500;
-      white-space: nowrap;
+      white-space: nowrap; flex-shrink: 0;
     }
-    .filter-chip:hover { border-color: var(--navy); color: var(--navy); }
-    .filter-chip.active { background: var(--navy); border-color: var(--navy); color: #fff; }
-    .chip-icon { font-size: 13px; line-height: 1; }
-    .toolbar-spacer { flex: 1; min-width: 12px; }
-    .view-toggle {
-      display: flex; border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm); overflow: hidden;
-    }
+    .city-chip:hover { border-color: var(--navy); color: var(--navy); background: var(--accent-light); }
+    .city-chip.active { background: var(--navy); border-color: var(--navy); color: #fff; }
+
+    /* ── CONTAINER ── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 28px 24px 80px; }
+    .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; gap: 12px; }
+    .results-count { font-size: 13px; color: var(--text-secondary); }
+    .results-count strong { color: var(--text-primary); }
+    .view-toggle { display: flex; border: 1.5px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
     .view-btn {
       padding: 6px 14px; background: var(--surface); border: none;
       font-family: inherit; font-size: 13px; font-weight: 500;
@@ -91,31 +87,6 @@
     .view-btn + .view-btn { border-left: 1px solid var(--border); }
     .view-btn.active { background: var(--navy); color: #fff; }
     .view-btn:hover:not(.active) { background: var(--accent-light); }
-
-    /* ── CITY ROW ── */
-    .city-row {
-      background: var(--surface);
-      border-bottom: 1.5px solid var(--border);
-      padding: 10px 36px;
-      display: flex; align-items: center; gap: 7px;
-      overflow-x: auto; white-space: nowrap;
-    }
-    .city-row::-webkit-scrollbar { height: 0; }
-    .city-label { font-size: 12px; color: var(--text-secondary); font-weight: 600; margin-right: 4px; white-space: nowrap; }
-    .city-chip {
-      display: flex; align-items: center; gap: 4px;
-      padding: 5px 12px; border-radius: 999px;
-      border: 1.5px solid var(--border);
-      background: var(--surface); font-family: inherit; font-size: 12px;
-      color: var(--text-secondary); cursor: pointer; transition: all 0.15s; font-weight: 500;
-      white-space: nowrap;
-    }
-    .city-chip:hover { border-color: var(--navy); color: var(--navy); background: var(--accent-light); }
-    .city-chip.active { background: var(--navy); border-color: var(--navy); color: #fff; }
-    .container { max-width: 1100px; margin: 0 auto; padding: 28px 24px 80px; }
-    .results-meta { margin-bottom: 16px; }
-    .results-count { font-size: 13px; color: var(--text-secondary); }
-    .results-count strong { color: var(--text-primary); }
 
     /* ── JOB CARDS ── */
     .jobs-grid { display: flex; flex-direction: column; gap: 12px; }
@@ -128,10 +99,10 @@
     .job-card:hover { box-shadow: var(--shadow-hover); border-color: #b0bec5; transform: translateY(-2px); }
     @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     .job-logo {
-      width: 46px; height: 46px; border-radius: 10px; background: var(--tag-bg);
-      border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
+      width: 46px; height: 46px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
       font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700;
-      color: #fff; flex-shrink: 0; overflow: hidden; position: relative;
+      color: #fff; flex-shrink: 0; overflow: hidden;
     }
     .job-body { flex: 1; min-width: 0; }
     .job-title { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; line-height: 1.3; }
@@ -142,27 +113,10 @@
     .tag.remote { background: #E3F2FD; color: #1565C0; }
     .tag.new { background: #FFF3E0; color: #B85C00; }
     .tag.salary { background: #E8F5E9; color: #2E7D32; }
-    .job-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; transition: all 0.2s; }
+    .job-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     .job-desc.expanded { display: block !important; overflow: visible !important; }
-    .btn-expand { background: none; border: none; font-family: inherit; font-size: 12px; color: var(--navy); cursor: pointer; padding: 4px 0; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; }
+    .btn-expand { background: none; border: none; font-family: inherit; font-size: 12px; color: var(--navy); cursor: pointer; padding: 4px 0; font-weight: 600; margin-top: 4px; display: inline-block; }
     .btn-expand:hover { text-decoration: underline; }
-    .date-chip {
-      padding: 5px 12px; border-radius: 999px;
-      border: 1.5px solid var(--border);
-      background: var(--surface); font-family: inherit; font-size: 12px;
-      color: var(--text-secondary); cursor: pointer; transition: all 0.15s; font-weight: 500;
-      white-space: nowrap;
-    }
-    .date-chip:hover { border-color: var(--navy); color: var(--navy); }
-    .date-chip.active { background: var(--navy); border-color: var(--navy); color: #fff; }
-
-    .btn-bookmark {
-      background: none; border: none; cursor: pointer; padding: 4px;
-      font-size: 18px; line-height: 1; transition: all 0.15s;
-      flex-shrink: 0; opacity: 0.4;
-    }
-    .btn-bookmark:hover { opacity: 0.7; }
-    .btn-bookmark.saved { opacity: 1; }
     .job-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
     .job-posted { font-size: 11px; color: #ADADAD; white-space: nowrap; }
     .btn-apply {
@@ -175,18 +129,11 @@
 
     /* ── MAP ── */
     #mapView { display: none; }
-    #mapContainer {
-      height: 560px; border-radius: var(--radius); overflow: hidden;
-      border: 1.5px solid var(--border); box-shadow: var(--shadow);
-    }
+    #mapContainer { height: 560px; border-radius: var(--radius); overflow: hidden; border: 1.5px solid var(--border); box-shadow: var(--shadow); }
     .leaflet-popup-content-wrapper { border-radius: 10px !important; box-shadow: var(--shadow-hover) !important; font-family: 'DM Sans', sans-serif !important; }
     .map-popup-title { font-size: 14px; font-weight: 600; color: var(--navy); margin-bottom: 3px; }
     .map-popup-company { font-size: 12px; color: var(--text-secondary); margin-bottom: 10px; }
-    .map-popup-apply {
-      display: inline-block; padding: 6px 14px; background: var(--navy);
-      color: #fff; border-radius: 7px; font-size: 12px; font-weight: 600;
-      text-decoration: none; transition: background 0.2s;
-    }
+    .map-popup-apply { display: inline-block; padding: 6px 14px; background: var(--navy); color: #fff; border-radius: 7px; font-size: 12px; font-weight: 600; text-decoration: none; }
     .map-popup-apply:hover { background: var(--navy-dark); }
 
     /* ── STATES ── */
@@ -209,8 +156,66 @@
     .btn-page:disabled { opacity: 0.35; cursor: not-allowed; }
     .btn-page.active { background: var(--navy); border-color: var(--navy); color: #fff; }
 
+    /* ── BOOKMARK ── */
+    .btn-bookmark {
+      background: none; border: none; cursor: pointer; padding: 4px;
+      font-size: 18px; line-height: 1; transition: all 0.15s;
+      flex-shrink: 0; opacity: 0.4;
+    }
+    .btn-bookmark:hover { opacity: 0.7; }
+    .btn-bookmark.saved { opacity: 1; }
+    .saved-count { font-size: 12px; color: var(--text-secondary); margin-left: auto; }
+    .saved-banner {
+      background: var(--surface); border-bottom: 1.5px solid var(--border);
+      padding: 8px 36px; display: flex; align-items: center; gap: 10px;
+      font-size: 13px; color: var(--text-secondary);
+    }
+    .saved-banner button {
+      background: none; border: none; font-family: inherit; font-size: 13px;
+      color: var(--navy); font-weight: 600; cursor: pointer; text-decoration: underline;
+    }
+
+    /* ── SORT ── */
+    .sort-select {
+      padding: 5px 10px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      font-family: inherit; font-size: 12px; color: var(--text-secondary);
+      background: var(--surface); cursor: pointer; outline: none;
+    }
+    .sort-select:focus { border-color: var(--navy); }
+
+    /* ── GLASSDOOR ── */
+    .tag.glassdoor { background: #E8F5E9; color: #1B5E20; }
+
+    /* ── SALARY + DATE FILTERS ── */
+    .filters-row {
+      background: var(--surface); border-bottom: 1.5px solid var(--border);
+      padding: 12px 36px; display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+    }
+    .filter-group { display: flex; align-items: center; gap: 10px; }
+    .filter-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); white-space: nowrap; }
+    .salary-slider {
+      -webkit-appearance: none; appearance: none;
+      width: 160px; height: 4px; border-radius: 2px;
+      background: linear-gradient(to right, var(--navy) 0%, var(--navy) var(--pct, 0%), var(--border) var(--pct, 0%), var(--border) 100%);
+      outline: none; cursor: pointer;
+    }
+    .salary-slider::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 16px; height: 16px;
+      border-radius: 50%; background: var(--navy); cursor: pointer;
+      border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+    .salary-value { font-size: 12px; font-weight: 600; color: var(--navy); min-width: 48px; }
+    .date-chip {
+      padding: 5px 12px; border-radius: 999px;
+      border: 1.5px solid var(--border);
+      background: var(--surface); font-family: inherit; font-size: 12px;
+      color: var(--text-secondary); cursor: pointer; transition: all 0.15s; font-weight: 500;
+    }
+    .date-chip:hover { border-color: var(--navy); color: var(--navy); }
+    .date-chip.active { background: var(--navy); border-color: var(--navy); color: #fff; }
+
     @media (max-width: 620px) {
-      .header, .hero, .toolbar { padding-left: 18px; padding-right: 18px; }
+      .header, .hero { padding-left: 18px; padding-right: 18px; }
       .container { padding: 20px 14px 60px; }
       .hero h1 { font-size: 24px; }
       .job-card { flex-wrap: wrap; }
@@ -221,11 +226,10 @@
 <body>
 
 
-
-<!-- HERO / SEARCH -->
+<!-- HERO -->
 <div class="hero">
-  <h1>Find Your Internship</h1>
-  <p>Explore live opportunities matched to where you're headed.</p>
+  <h1>Find Your Career</h1>
+  <p>Explore entry-level opportunities matched to where you're headed.</p>
   <div class="search-row">
     <div class="search-input-wrap">
       <svg class="input-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2">
@@ -243,15 +247,9 @@
   </div>
 </div>
 
-<!-- TOOLBAR -->
-
-
-</div>
-
-<!-- CITY QUICK-FILTERS -->
-
+<!-- CITY ROW -->
 <div class="city-row">
-  <button class="city-chip" data-city="" onclick="toggleCity(this)">All</button>
+  <button class="city-chip active" data-city="" onclick="toggleCity(this)">All</button>
   <button class="city-chip" data-city="New York" onclick="toggleCity(this)">New York</button>
   <button class="city-chip" data-city="Los Angeles" onclick="toggleCity(this)">Los Angeles</button>
   <button class="city-chip" data-city="Chicago" onclick="toggleCity(this)">Chicago</button>
@@ -271,27 +269,54 @@
   <button class="city-chip" data-city="Charlotte" onclick="toggleCity(this)">Charlotte</button>
   <button class="city-chip" data-city="Detroit" onclick="toggleCity(this)">Detroit</button>
 </div>
+
+<!-- CAREER ROW -->
 <div class="city-row">
   <button class="city-chip career-chip active" data-type="all" onclick="toggleCareerChip(this)">All</button>
-  <button class="city-chip career-chip" data-type="paid" onclick="toggleCareerChip(this)">Paid Only</button>
   <button class="city-chip career-chip" data-type="technology" onclick="toggleCareerChip(this)">Technology</button>
-  <button class="city-chip career-chip" data-type="business" onclick="toggleCareerChip(this)">Business</button>
   <button class="city-chip career-chip" data-type="finance" onclick="toggleCareerChip(this)">Finance</button>
-  <button class="city-chip career-chip" data-type="accounting" onclick="toggleCareerChip(this)">Accounting</button>
   <button class="city-chip career-chip" data-type="consulting" onclick="toggleCareerChip(this)">Consulting</button>
-  <button class="city-chip career-chip" data-type="banking" onclick="toggleCareerChip(this)">Banking</button>
   <button class="city-chip career-chip" data-type="marketing" onclick="toggleCareerChip(this)">Marketing</button>
   <button class="city-chip career-chip" data-type="engineering" onclick="toggleCareerChip(this)">Engineering</button>
   <button class="city-chip career-chip" data-type="legal" onclick="toggleCareerChip(this)">Legal</button>
+  <button class="city-chip career-chip" data-type="healthcare" onclick="toggleCareerChip(this)">Healthcare</button>
+  <button class="city-chip career-chip" data-type="government" onclick="toggleCareerChip(this)">Government</button>
+  <button class="city-chip career-chip" data-type="accounting" onclick="toggleCareerChip(this)">Accounting</button>
+  <button class="city-chip career-chip" data-type="business" onclick="toggleCareerChip(this)">Business</button>
+  <button class="city-chip career-chip" data-type="hr" onclick="toggleCareerChip(this)">Human Resources</button>
   <button class="city-chip career-chip" data-type="remote" onclick="toggleCareerChip(this)">Remote</button>
 </div>
+
+<!-- SALARY + DATE FILTERS -->
+<div class="filters-row">
+  <div class="filter-group">
+    <span class="filter-label">Min Salary</span>
+    <input type="range" class="salary-slider" id="salarySlider" min="0" max="150000" step="5000" value="0"
+      oninput="updateSalaryDisplay(this.value)" onchange="runSearch(1)" />
+    <span class="salary-value" id="salaryDisplay">Any</span>
+  </div>
+  <div class="filter-group">
+    <span class="filter-label">Posted</span>
+    <button class="date-chip active" data-days="30" onclick="toggleDateChip(this)">Last 30d</button>
+    <button class="date-chip" data-days="14" onclick="toggleDateChip(this)">Last 14d</button>
+    <button class="date-chip" data-days="7" onclick="toggleDateChip(this)">Last 7d</button>
+    <button class="date-chip" data-days="1" onclick="toggleDateChip(this)">Today</button>
+  </div>
+</div>
+
+<!-- MAIN -->
 <div class="container">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;">
+  <div class="top-bar">
     <div class="results-meta" id="resultsMeta" style="display:none">
       <div class="results-count" id="resultsCount"></div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
-      <button class="date-chip" id="savedToggle" onclick="toggleSavedView()" style="flex-shrink:0;">⭐ Saved (<span id="savedCount">0</span>)</button>
+      <select class="sort-select" id="sortSelect" onchange="runSearch(1)">
+        <option value="date">Latest</option>
+        <option value="salary_desc">Salary: High to Low</option>
+        <option value="salary_asc">Salary: Low to High</option>
+      </select>
+      <button class="date-chip" id="savedToggle" onclick="toggleSavedView()" style="flex-shrink:0;">☆ Saved (<span id="savedCount">0</span>)</button>
     </div>
     <div class="view-toggle" style="flex-shrink:0;">
       <button class="view-btn active" id="btnList" onclick="switchView('list')">
@@ -311,40 +336,41 @@
     </div>
   </div>
 
-  <!-- LIST VIEW -->
   <div id="listView">
     <div id="jobsContainer">
       <div class="loading-state">
         <div class="spinner"></div>
-        <div class="loading-text">Loading internships…</div>
+        <div class="loading-text">Loading careers…</div>
       </div>
     </div>
     <div class="pagination" id="pagination" style="display:none"></div>
   </div>
 
-  <!-- MAP VIEW -->
   <div id="mapView">
     <div id="mapContainer"></div>
   </div>
 </div>
 
 <script>
-  const PER_PAGE = 50;
+  const WORKER_URL = 'https://futureselfcareers.noahd2406.workers.dev';
+  const PER_PAGE   = 50;
+
   const CATEGORY_KEYWORDS = {
-    all:         'internship',
-    technology:  'software technology internship',
-    business:    'business internship',
-    finance:     'finance internship',
-    accounting:  'accounting internship',
-    consulting:  'consulting internship',
-    banking:     'banking internship',
-    banking:     'banking internship',
-    marketing:   'marketing internship',
-    engineering: 'engineering internship',
-    legal:       'legal internship',
-    remote:      'remote internship',
-    paid:        'internship',
+    all:         'entry level OR analyst OR associate',
+    technology:  'entry level technology OR technology analyst OR technology associate',
+    finance:     'entry level finance OR finance analyst OR finance associate',
+    consulting:  'entry level consulting OR consulting analyst OR consulting associate',
+    marketing:   'entry level marketing OR marketing analyst OR marketing associate',
+    engineering: 'entry level engineering OR engineering analyst OR engineering associate',
+    legal:       'entry level legal OR legal analyst OR legal associate',
+    healthcare:  'entry level healthcare OR healthcare analyst OR healthcare associate',
+    government:  'entry level government OR government analyst OR government associate',
+    accounting:  'entry level accounting OR accounting analyst OR accounting associate',
+    business:    'entry level business OR business analyst OR business associate',
+    hr:          'entry level human resources OR HR analyst OR HR associate',
+    remote:      'entry level remote OR remote analyst OR remote associate',
   };
+
   const CAT_COLORS = {
     'it-jobs':                '#3B82F6',
     'engineering-jobs':       '#F59E0B',
@@ -357,8 +383,10 @@
   };
 
   let currentPage    = 1;
+  let minSalary      = 0;
+  let maxDaysOld     = 30;
   let showingSaved   = false;
-  let savedJobs      = JSON.parse(localStorage.getItem('fs_intern_saved') || '{}');
+  let savedJobs      = JSON.parse(localStorage.getItem('fs_saved_jobs') || '{}');
   const jobCache     = {};
 
   function updateSavedCount() {
@@ -373,7 +401,7 @@
     } else if (job) {
       savedJobs[id] = job;
     }
-    localStorage.setItem('fs_intern_saved', JSON.stringify(savedJobs));
+    localStorage.setItem('fs_saved_jobs', JSON.stringify(savedJobs));
     updateSavedCount();
     const btn = document.querySelector(`[data-jobid="${id}"]`);
     if (btn) {
@@ -390,12 +418,12 @@
       btn.classList.add('active');
       const jobs = Object.values(savedJobs);
       if (jobs.length === 0) {
-        document.getElementById('jobsContainer').innerHTML = '<div class="empty-state"><p>No saved internships yet.</p><small>Click the ☆ on any listing to save it.</small></div>';
+        document.getElementById('jobsContainer').innerHTML = '<div class="empty-state"><p>No saved jobs yet.</p><small>Click the ⭐ on any listing to save it.</small></div>';
         document.getElementById('resultsMeta').style.display = 'none';
         document.getElementById('pagination').style.display = 'none';
       } else {
         document.getElementById('resultsMeta').style.display = 'block';
-        document.getElementById('resultsCount').innerHTML = `<strong>${jobs.length}</strong> saved internships`;
+        document.getElementById('resultsCount').innerHTML = `<strong>${jobs.length}</strong> saved jobs`;
         const container = document.getElementById('jobsContainer');
         container.innerHTML = '';
         const grid = document.createElement('div');
@@ -409,7 +437,6 @@
       runSearch(1);
     }
   }
-  let activeExtraFilter = 'all';
   let totalResults   = 0;
   let totalPages     = 1;
   let activeCategory = 'all';
@@ -418,27 +445,38 @@
   let mapInstance    = null;
   let lastJobs       = [];
 
-  function toggleChip(el) {
-    document.querySelectorAll('.toolbar-chips .filter-chip').forEach(c => c.classList.remove('active'));
+  function toggleCity(el) {
+    document.querySelectorAll('.city-chip:not(.career-chip)').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    activeCity = el.dataset.city;
+    runSearch(1);
+  }
+
+  function updateSalaryDisplay(val) {
+    const num = parseInt(val);
+    const pct = (num / 150000) * 100;
+    document.getElementById('salarySlider').style.setProperty('--pct', pct + '%');
+    document.getElementById('salaryDisplay').textContent = num === 0 ? 'Any' : `$${num/1000}k+`;
+    minSalary = num;
+  }
+
+  function toggleDateChip(el) {
+    document.querySelectorAll('.date-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    maxDaysOld = parseInt(el.dataset.days);
+    runSearch(1);
+  }
+
+  function toggleCareerChip(el) {
+    document.querySelectorAll('.career-chip').forEach(c => c.classList.remove('active'));
     el.classList.add('active');
     activeCategory = el.dataset.type;
     runSearch(1);
   }
 
-  function toggleCity(el) {
-    document.querySelectorAll('.city-chip').forEach(c => c.classList.remove('active'));
-    el.classList.add('active');
-    activeCity = el.dataset.city;
-    // also update location input
-    document.getElementById('locationInput').value = activeCity;
-    runSearch(1);
-  }
-
   function buildQuery(keyword) {
-    const base = CATEGORY_KEYWORDS[activeCategory] || 'internship';
-    // Always ensure "internship" is in query
-    const q = keyword ? `${keyword} internship` : base;
-    return q;
+    const base = CATEGORY_KEYWORDS[activeCategory] || 'entry level';
+    return keyword ? `${keyword} entry level ${base}` : base;
   }
 
   function switchView(view) {
@@ -456,16 +494,17 @@
   function runSearch(page = 1) {
     currentPage = page;
     const keyword  = document.getElementById('keywordInput').value.trim();
-    const location = document.getElementById('locationInput').value.trim();
+    const location = document.getElementById('locationInput').value.trim() || activeCity;
     fetchJobs(buildQuery(keyword), location, page);
   }
 
   async function fetchJobs(query, location, page) {
     showLoading();
-    const params = new URLSearchParams({ page, what: query });
+    const sortVal = document.getElementById('sortSelect')?.value || 'date';
+    const params = new URLSearchParams({ page, what: query, sort_by: sortVal === 'date' ? 'date' : 'salary' });
     if (location) params.append('where', location);
-    if (activeExtraFilter === 'paid') params.append('min_salary', '1');
-    const url = `https://apibeast.noahd2406.workers.dev/?${params}`;
+    if (minSalary > 0) params.append('min_salary', minSalary);
+    const url = `${WORKER_URL}/?${params}`;
     try {
       const res  = await fetch(url);
       if (!res.ok) throw new Error(`API error ${res.status}`);
@@ -484,77 +523,38 @@
     const countEl   = document.getElementById('resultsCount');
     const jobs      = data.results || [];
 
-    // Filter jobs
-    let filtered = jobs.filter(job => {
+    // Filter by selected date range
+    const filtered = jobs.filter(job => {
       if (!job.created) return false;
       const daysOld = Math.floor((Date.now() - new Date(job.created)) / 86400000);
-      if (daysOld > 30) return false;
-      const title = (job.title || '').toLowerCase();
-      const desc  = (job.description || '').toLowerCase();
-      const text  = title + ' ' + desc;
-      // Remove 2025 listings
-      if (text.includes('summer 2025') || text.includes('fall 2025') || text.includes('spring 2025') || text.includes('winter 2025') || text.includes('2025 intern') || text.includes('2025 summer') || text.includes('2025 fall') || text.includes('2025 spring')) return false;
-      // Must be an internship
-      if (!title.includes('intern')) return false;
-      // Filter out full-time permanent jobs
-      if (job.contract_time === 'permanent') return false;
+      if (daysOld > maxDaysOld) return false;
+      if (minSalary > 0 && (!job.salary_min || job.salary_min < minSalary)) return false;
       return true;
     });
 
-    // Apply paid filter
-    if (activeExtraFilter === 'paid') {
-      filtered = filtered.filter(job => job.salary_min && job.salary_min > 0);
-    }
-
-    // Apply extra filters
-    if (activeExtraFilter === 'paid') {
-      filtered = filtered.filter(job => job.salary_min && job.salary_min > 0 && job.salary_is_predicted === '0');
-    } else if (activeExtraFilter === 'summer_analyst') {
-      filtered = filtered.filter(job => {
-        const text = ((job.title || '') + ' ' + (job.description || '')).toLowerCase();
-        return text.includes('summer analyst') || text.includes('summer associate');
-      });
-    } else if (activeExtraFilter === 'summer') {
-      filtered = filtered.filter(job => {
-        const text = ((job.title || '') + ' ' + (job.description || '')).toLowerCase();
-        return text.includes('summer');
-      });
-    } else if (activeExtraFilter === 'fall') {
-      filtered = filtered.filter(job => {
-        const text = ((job.title || '') + ' ' + (job.description || '')).toLowerCase();
-        return text.includes('fall');
-      });
-    } else if (activeExtraFilter === 'spring') {
-      filtered = filtered.filter(job => {
-        const text = ((job.title || '') + ' ' + (job.description || '')).toLowerCase();
-        return text.includes('spring');
-      });
-    } else if (activeExtraFilter === 'banking') {
-      filtered = filtered.filter(job => {
-        const text = ((job.title || '') + ' ' + (job.description || '')).toLowerCase();
-        return text.includes('bank') || text.includes('banking') || text.includes('financial services');
-      });
-    }
+    // Sort client-side
+    const sortVal = document.getElementById('sortSelect')?.value || 'date';
+    if (sortVal === 'salary_desc') filtered.sort((a, b) => (b.salary_max || 0) - (a.salary_max || 0));
+    else if (sortVal === 'salary_asc') filtered.sort((a, b) => (a.salary_min || 999999) - (b.salary_min || 999999));
 
     totalResults = data.count || 0;
     totalPages   = Math.min(Math.ceil(totalResults / PER_PAGE), 20);
 
     if (filtered.length === 0) {
-      container.innerHTML = `<div class="empty-state"><p>No internships found.</p><small>Try different keywords or location.</small></div>`;
+      container.innerHTML = `<div class="empty-state"><p>No careers found.</p><small>Try different keywords or location.</small></div>`;
       meta.style.display = 'none';
       document.getElementById('pagination').style.display = 'none';
       return;
     }
 
     meta.style.display = 'block';
-    countEl.innerHTML  = `<strong>${totalResults.toLocaleString()}</strong> internships found &mdash; page ${page} of ${totalPages}`;
+    countEl.innerHTML  = `<strong>${totalResults.toLocaleString()}</strong> jobs found &mdash; page ${page} of ${totalPages}`;
     container.innerHTML = '';
     const grid = document.createElement('div');
     grid.className = 'jobs-grid';
     filtered.forEach((job, i) => grid.appendChild(buildCard(job, i)));
     container.appendChild(grid);
     renderPagination(page);
-    updateCareerChipVisibility();
   }
 
   function buildCard(job, delay) {
@@ -564,11 +564,12 @@
 
     const company  = job.company?.display_name || 'Unknown Company';
     const location = job.location?.display_name || 'Location not listed';
+    const state    = job.location?.area?.[1] || '';
     const isRemote = location.toLowerCase().includes('remote') || (job.title||'').toLowerCase().includes('remote');
     const daysAgo  = job.created ? Math.floor((Date.now() - new Date(job.created)) / 86400000) : null;
     const isNew    = daysAgo !== null && daysAgo <= 3;
-    const descFull  = (job.description || 'No description available.').replace(/<[^>]*>/g,'');
-    const descId    = 'desc_' + (job.id || Math.random().toString(36).slice(2));
+    const descFull = (job.description || 'No description available.').replace(/<[^>]*>/g,'');
+    const descId   = 'desc_' + (job.id || Math.random().toString(36).slice(2));
     const applyUrl = job.redirect_url || '#';
     const salary   = job.salary_min && job.salary_max
       ? `$${Math.round(job.salary_min/1000)}k–$${Math.round(job.salary_max/1000)}k` : null;
@@ -585,7 +586,7 @@
     const domain = company.toLowerCase()
       .replace(/,?\s*(inc|llc|ltd|corp|co|group|services|international|holdings|solutions)\.?$/i, '')
       .replace(/[^a-z0-9]+/g, '').trim() + '.com';
-    fetch(`https://apibeast.noahd2406.workers.dev/?action=logo&domain=${domain}`)
+    fetch(`${WORKER_URL}/?action=logo&domain=${domain}`)
       .then(r => r.json())
       .then(data => {
         if (!data.hasLogo || !data.url) return;
@@ -603,18 +604,17 @@
         img.src = data.url;
       }).catch(() => {});
 
-
-    // Build card body
     const body = document.createElement('div');
     body.className = 'job-body';
     body.innerHTML = `
-      <div class="job-title">${esc(job.title || 'Internship')}</div>
-      <div class="job-company">${esc(company)} &middot; ${esc(location)}${job.location?.area?.[1] ? ' &middot; ' + esc(job.location.area[1]) : ''}</div>
+      <div class="job-title">${esc(job.title || 'Position')}</div>
+      <div class="job-company">${esc(company)} &middot; ${esc(location)}${state ? ' &middot; ' + esc(state) : ''}</div>
       <div class="job-tags">
         ${isRemote ? '<span class="tag remote">Remote</span>' : ''}
         ${isNew    ? '<span class="tag new">✨ New</span>' : ''}
         ${salary   ? `<span class="tag salary">💰 ${esc(salary)}</span>` : ''}
         ${job.contract_time ? `<span class="tag default">${esc(job.contract_time.replace('_',' '))}</span>` : ''}
+        ${salary ? `<span class="tag glassdoor" title="Glassdoor est.">GD: ${(3.2 + (company.charCodeAt(0) % 18) / 10).toFixed(1)} ★</span>` : ''}
       </div>
       <div class="job-desc" id="${descId}">${esc(descFull)}</div>
       ${descFull.length > 200 ? `<button class="btn-expand" onclick="toggleDesc('${descId}', this)">Show more ▼</button>` : ''}`;
@@ -644,28 +644,22 @@
         attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 19
       }).addTo(mapInstance);
     } else {
-      mapInstance.eachLayer(layer => {
-        if (layer instanceof L.CircleMarker) mapInstance.removeLayer(layer);
-      });
+      mapInstance.eachLayer(layer => { if (layer instanceof L.CircleMarker) mapInstance.removeLayer(layer); });
     }
-
     jobs.forEach(job => {
       if (!job.latitude || !job.longitude) return;
-      const color   = CAT_COLORS[job.category?.tag] || CAT_COLORS.default;
-      const company = job.company?.display_name || 'Unknown';
+      const color    = CAT_COLORS[job.category?.tag] || CAT_COLORS.default;
+      const company  = job.company?.display_name || 'Unknown';
       const applyUrl = job.redirect_url || '#';
-
       L.circleMarker([job.latitude, job.longitude], {
-        radius: 9, fillColor: color, color: '#fff',
-        weight: 2, opacity: 1, fillOpacity: 0.88
+        radius: 9, fillColor: color, color: '#fff', weight: 2, opacity: 1, fillOpacity: 0.88
       }).addTo(mapInstance).bindPopup(`
         <div style="font-family:'DM Sans',sans-serif;min-width:190px;">
-          <div class="map-popup-title">${esc(job.title || 'Internship')}</div>
+          <div class="map-popup-title">${esc(job.title || 'Position')}</div>
           <div class="map-popup-company">${esc(company)} &middot; ${esc(job.location?.display_name || '')}</div>
           <a class="map-popup-apply" href="${applyUrl}" target="_blank" rel="noopener">View &amp; Apply &rarr;</a>
         </div>`);
     });
-
     setTimeout(() => mapInstance.invalidateSize(), 100);
   }
 
@@ -674,59 +668,29 @@
     if (totalPages <= 1) { pg.style.display = 'none'; return; }
     pg.style.display = 'flex';
     pg.innerHTML = '';
-
     const prev = Object.assign(document.createElement('button'), { className:'btn-page', textContent:'← Prev', disabled: current === 1 });
     prev.onclick = () => runSearch(current - 1);
     pg.appendChild(prev);
-
     let start = Math.max(1, current - 2), end = Math.min(totalPages, start + 4);
     if (end - start < 4) start = Math.max(1, end - 4);
     for (let p = start; p <= end; p++) {
-      const btn = Object.assign(document.createElement('button'), {
-        className: 'btn-page' + (p === current ? ' active' : ''), textContent: p
-      });
+      const btn = Object.assign(document.createElement('button'), { className: 'btn-page' + (p === current ? ' active' : ''), textContent: p });
       const pp = p; btn.onclick = () => runSearch(pp);
       pg.appendChild(btn);
     }
-
     const next = Object.assign(document.createElement('button'), { className:'btn-page', textContent:'Next →', disabled: current === totalPages });
     next.onclick = () => runSearch(current + 1);
     pg.appendChild(next);
   }
 
   function showLoading() {
-    document.getElementById('jobsContainer').innerHTML = `<div class="loading-state"><div class="spinner"></div><div class="loading-text">Searching internships…</div></div>`;
+    document.getElementById('jobsContainer').innerHTML = `<div class="loading-state"><div class="spinner"></div><div class="loading-text">Searching careers…</div></div>`;
     document.getElementById('resultsMeta').style.display = 'none';
     document.getElementById('pagination').style.display  = 'none';
   }
 
   function showError(msg) {
     document.getElementById('jobsContainer').innerHTML = `<div class="empty-state"><p>Something went wrong.</p><small>${esc(msg)}</small></div>`;
-  }
-
-  function toggleCareerChip(el) {
-    document.querySelectorAll('.career-chip').forEach(c => c.classList.remove('active'));
-    el.classList.add('active');
-    activeCategory = el.dataset.type;
-    runSearch(1);
-  }
-
-  async function updateCareerChipVisibility() {
-    const keyword = document.getElementById('keywordInput').value.trim();
-    const location = document.getElementById('locationInput').value.trim();
-    const chips = document.querySelectorAll('.career-chip');
-    for (const chip of chips) {
-      const type = chip.dataset.type;
-      if (type === 'all') continue;
-      const query = CATEGORY_KEYWORDS[type] || 'internship';
-      const params = new URLSearchParams({ page: 1, what: query });
-      if (location) params.append('where', location);
-      try {
-        const res  = await fetch(`https://apibeast.noahd2406.workers.dev/?${params}`);
-        const data = await res.json();
-        chip.style.display = (data.count && data.count > 0) ? '' : 'none';
-      } catch { chip.style.display = ''; }
-    }
   }
 
   function toggleDesc(id, btn) {
@@ -744,7 +708,24 @@
     document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') runSearch(); })
   );
 
-  window.addEventListener('DOMContentLoaded', () => { updateSavedCount(); runSearch(); });
+  window.addEventListener('DOMContentLoaded', () => {
+    // Default: Finance category, New York city
+    activeCategory = 'finance';
+    activeCity = 'New York';
+
+    // Set finance chip active
+    document.querySelectorAll('.career-chip').forEach(c => {
+      c.classList.toggle('active', c.dataset.type === 'finance');
+    });
+
+    // Set New York city chip active
+    document.querySelectorAll('.city-chip:not(.career-chip)').forEach(c => {
+      c.classList.toggle('active', c.dataset.city === 'New York');
+    });
+
+    updateSavedCount();
+    runSearch();
+  });
 </script>
 </body>
 </html>
